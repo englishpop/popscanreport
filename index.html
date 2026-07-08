@@ -32,14 +32,14 @@
       const [showMap, setShowMap] = useState(false);
 
       const allTypes = [
-        { id: 1, m: true, b: true, c: true, icon: '👑', name: '완벽한 밸런스형', desc: '도전, 신중함, 전략을 모두 갖춘 완성형 우등생', color: 'bg-purple-50 border-purple-200 text-purple-700' },
-        { id: 2, m: true, b: true, c: false, icon: '🎯', name: '실행력 강한 모범생형', desc: '빠른 도전과 꼼꼼한 행동 조절을 겸비', color: 'bg-blue-50 border-blue-200 text-blue-700' },
-        { id: 3, m: true, b: false, c: true, icon: '⚡', name: '전략적 도전자형', desc: '에너지와 메타인지를 갖춘 영리한 행동파', color: 'bg-teal-50 border-teal-200 text-teal-700' },
-        { id: 4, m: true, b: false, c: false, icon: '🔥', name: '순수 민첩한 도전자형', desc: '실패를 두려워하지 않는 강력한 돌파력', color: 'bg-red-50 border-red-200 text-red-700' },
-        { id: 5, m: false, b: true, c: true, icon: '🦉', name: '신중한 학자형', desc: '완벽하게 분석하고 전략적으로 움직임', color: 'bg-indigo-50 border-indigo-200 text-indigo-700' },
-        { id: 6, m: false, b: true, c: false, icon: '🔍', name: '순수 신중한 탐색가형', desc: '완벽한 확신이 설 때만 신중하게 행동', color: 'bg-sky-50 border-sky-200 text-sky-700' },
-        { id: 7, m: false, b: false, c: true, icon: '♟️', name: '순수 자기주도적 전략가형', desc: '도움이 필요한 순간을 정확히 아는 전략가', color: 'bg-emerald-50 border-emerald-200 text-emerald-700' },
-        { id: 8, m: false, b: false, c: false, icon: '🌱', name: '유연한 잠재력형', desc: '틀에 얽매이지 않고 상황을 유연하게 관망', color: 'bg-stone-50 border-stone-200 text-stone-700' }
+        { id: 1, m: true, b: true, c: true, icon: '👑', name: '올라운드 밸런스형', desc: '집중력, 두뇌 회전, 자립심을 모두 갖춘 완성형 우등생', color: 'bg-purple-50 border-purple-200 text-purple-700' },
+        { id: 2, m: true, b: true, c: false, icon: '🎯', name: '성실한 자립형', desc: '진득한 끈기와 스스로 해결하려는 의지를 겸비', color: 'bg-blue-50 border-blue-200 text-blue-700' },
+        { id: 3, m: true, b: false, c: true, icon: '⚡', name: '영리한 해결사형', desc: '빠른 두뇌 회전과 자립심을 갖춘 스마트 해결사', color: 'bg-teal-50 border-teal-200 text-teal-700' },
+        { id: 4, m: true, b: false, c: false, icon: '🔥', name: '당찬 자립형', desc: '스스로 고치고 혼자 해내려는 의지가 강한 아이', color: 'bg-red-50 border-red-200 text-red-700' },
+        { id: 5, m: false, b: true, c: true, icon: '🦉', name: '차분한 탐구형', desc: '흔들림 없는 집중력과 안정적인 사고 흐름의 소유자', color: 'bg-indigo-50 border-indigo-200 text-indigo-700' },
+        { id: 6, m: false, b: true, c: false, icon: '🌳', name: '우직한 성실형', desc: '끝까지 포기하지 않는 진득한 엉덩이 힘의 소유자', color: 'bg-sky-50 border-sky-200 text-sky-700' },
+        { id: 7, m: false, b: false, c: true, icon: '💡', name: '명민한 두뇌형', desc: '또래보다 빠르고 안정적인 두뇌 회전이 돋보임', color: 'bg-emerald-50 border-emerald-200 text-emerald-700' },
+        { id: 8, m: false, b: false, c: false, icon: '🌱', name: '무한 잠재력형', desc: '어떤 강점도 흡수할 수 있는 열려있는 도화지 기질', color: 'bg-stone-50 border-stone-200 text-stone-700' }
       ];
 
       useEffect(() => {
@@ -48,35 +48,35 @@
         const isC = cScore >= 50;
 
         if (isM && isB && isC) {
-          setDominantType('👑 완벽한 밸런스형 (All-Rounder)');
-          setTypeDescription('도전 에너지, 신중함, 전략적 사고를 모두 갖춘 이상적인 우등생 기질입니다. 어떤 난이도의 과제가 주어져도 스스로 멘탈을 관리하며 안정적으로 해결해 냅니다.');
-          setBehaviorList(['실패를 두려워하지 않는 과감한 도전', '문제를 꼼꼼히 살피는 높은 집중력', '필요할 때만 힌트를 쓰는 고도의 전략성']);
+          setDominantType('👑 올라운드 밸런스형 (All-Round Balancer)');
+          setTypeDescription('집중력, 두뇌 회전, 자립심을 모두 갖춘 이상적인 우등생 기질입니다. 어떤 난이도의 과제가 주어져도 스스로 멘탈을 관리하며 안정적으로 해결해 냅니다.');
+          setBehaviorList(['딴짓 없이 끝까지 완주하는 몰입유지력과 공부끈기', '또래보다 빠른 생각속도와 일정한 공부리듬', '스스로 실수를 고치고 힌트 없이 해결하는 자립심']);
         } else if (isM && isB && !isC) {
-          setDominantType('🎯 실행력 강한 모범생형 (Action-Oriented Achiever)');
-          setTypeDescription('빠르게 도전하면서도 오답을 최소화하려는 꼼꼼함을 겸비했습니다. 교과 과정에서 성실하게 과제를 수행하며 눈에 띄는 높은 성취를 보일 확률이 높습니다.');
-          setBehaviorList(['오답에 좌절하지 않고 즉각 재도전', '화면 이탈 없는 강한 착석 유지력', '복잡한 계산보다 직관적인 문제 해결 선호']);
+          setDominantType('🎯 성실한 자립형 (Sincere Independent)');
+          setTypeDescription('진득하게 앉아 끝까지 해내는 끈기와, 스스로 실수를 고치고 혼자 해결하려는 의지를 겸비했습니다. 처리 속도는 아직 발전 중이지만, 성실함과 자립심이 탄탄해 꾸준히 성취를 쌓아가는 유형입니다.');
+          setBehaviorList(['오답에 좌절하지 않고 즉각 재도전하는 재시도근성', '딴짓 없이 끝까지 완주하는 강한 공부끈기', '스스로 실수를 발견하고 고치는 수정이력']);
         } else if (isM && !isB && isC) {
-          setDominantType('⚡ 전략적 도전자형 (Strategic Challenger)');
-          setTypeDescription('에너지가 넘치면서도 문제의 난이도를 파악하는 메타인지의 눈이 매섭습니다. 혼자 풀 수 있는 것과 도움을 받을 것을 영리하게 구분하여 매우 빠르게 목표를 달성합니다.');
-          setBehaviorList(['문제 진입 후 망설임 없는 빠른 터치', '어려운 문제에서만 전략적으로 힌트 사용', '정답을 향한 속도감 있는 실행력']);
+          setDominantType('⚡ 영리한 해결사형 (Clever Solver)');
+          setTypeDescription('빠른 두뇌 회전과 스스로 해결하려는 자립심이 돋보입니다. 다만 흥미가 떨어지면 집중이 흐트러질 수 있어, 몰입을 유지시켜주는 환경이 뒷받침되면 폭발적인 성과를 냅니다.');
+          setBehaviorList(['또래보다 빠른 생각속도로 문제에 즉각 반응', '힌트 없이 혼자 해결하는 높은 학습독립성', '일정한 공부리듬으로 페이스를 안정적으로 유지']);
         } else if (isM && !isB && !isC) {
-          setDominantType('🔥 순수 민첩한 도전자형 (Pure Agile Challenger)');
-          setTypeDescription('오답을 두려워하지 않고 끊임없이 부딪히며 배우는 강력한 행동파입니다. 초등 교실에서 가장 먼저 손을 들고 참여하는, 자기 확신과 에너지가 넘치는 아이로 성장합니다.');
-          setBehaviorList(['문제 진입 후 첫 터치가 매우 빠름', '틀려도 망설임 없이 즉각 재도전', '정답을 맞힐 때까지 포기하지 않는 근성']);
+          setDominantType('🔥 당찬 자립형 (Bold Independent)');
+          setTypeDescription('스스로 실수를 고치고 힌트 없이 혼자 해내려는 의지가 매우 강한 아이입니다. 집중 지속과 처리 속도는 아직 자라는 중이지만, 이 강한 자립심이야말로 학습 성장의 가장 단단한 엔진입니다.');
+          setBehaviorList(['스스로 실수를 발견하고 즉시 교정하는 수정이력', '힌트 없이 부딪히며 해결하려는 학습독립성', '자기 확신이 강해 주도적으로 문제에 접근함']);
         } else if (!isM && isB && isC) {
-          setDominantType('🦉 신중한 학자형 (Deliberate Scholar)');
-          setTypeDescription('행동하기 전 완벽하게 분석하고, 아는 것과 모르는 것을 명확히 구분합니다. 정답을 누르기까지 속도는 조금 느릴 수 있지만, 초등 고학년으로 갈수록 엄청난 학업 잠재력을 터뜨립니다.');
-          setBehaviorList(['첫 터치 전 화면을 오래 관찰하고 분석함', '적재적소에만 힌트를 호출하여 단서 획득', '스스로 완벽히 이해할 때까지 신중하게 고민']);
+          setDominantType('🦉 차분한 탐구형 (Calm Explorer)');
+          setTypeDescription('흔들림 없는 집중력과 빠르고 안정적인 사고 흐름을 함께 갖췄습니다. 아직 힌트에 기대는 경향이 있지만, 혼자 해결하는 성공 경험이 쌓이면 최상위권 잠재력이 터지는 유형입니다.');
+          setBehaviorList(['딴짓 없이 화면에 집중하는 높은 몰입유지력', '일정한 공부리듬으로 페이스를 흔들림 없이 유지', '포기 않고 끝까지 완주하는 공부끈기']);
         } else if (!isM && isB && !isC) {
-          setDominantType('🔍 순수 신중한 탐색가형 (Pure Deliberate Explorer)');
-          setTypeDescription('시각적 단서를 꼼꼼히 살피고 완벽한 확신이 섰을 때만 움직이는 정밀한 탐색가입니다. 덤벙대지 않고 꼼꼼하게 교과 과정을 소화하는 훌륭한 우등생의 자질을 갖추었습니다.');
-          setBehaviorList(['첫 터치 전 숙고하는 시간이 긺', '의미 없는 화면 터치나 이탈이 거의 없음', '한 번 누를 때 매우 신중하게 정답을 선택함']);
+          setDominantType('🌳 우직한 성실형 (Steadfast Worker)');
+          setTypeDescription('속도보다 끈기로 승부하는 진득한 노력파입니다. 딴짓 없이 끝까지 완주하는 엉덩이 힘이 최대 강점이며, 처리 속도와 자립심은 반복 경험을 통해 자연스럽게 따라오는 유형입니다.');
+          setBehaviorList(['딴짓 없이 학습에만 집중하는 몰입유지력', '흔들림 없이 끝까지 완주하는 공부끈기', '실패 앞에서도 다시 도전하는 재시도근성']);
         } else if (!isM && !isB && isC) {
-          setDominantType('♟️ 순수 자기주도적 전략가형 (Pure Strategic Thinker)');
-          setTypeDescription('자신이 모르는 부분을 스스로 돕기 위해 영리하게 힌트를 활용하는 메타인지 능력이 돋보입니다. 무작정 부딪히기보다, 효율적인 방법을 찾아 학습의 주도권을 쥐고 나아갑니다.');
-          setBehaviorList(['무작정 힌트 버튼을 연타하지 않음', '난이도가 높은 문항을 스스로 인지함', '도움을 받아 스스로 해결하려는 독립성이 강함']);
+          setDominantType('💡 명민한 두뇌형 (Bright Thinker)');
+          setTypeDescription('또래보다 빠른 생각속도와 일정한 사고 페이스가 돋보이는 두뇌파입니다. 다만 진득하게 앉아있는 힘과 혼자 해결하려는 의지가 함께 자라면 잠재력이 완성되는 유형입니다.');
+          setBehaviorList(['또래보다 빠른 생각속도로 문제를 처리', '일정한 공부리듬으로 페이스를 안정적으로 유지', '흥미 있는 과제에서 순간 집중력이 폭발함']);
         } else {
-          setDominantType('🌱 유연한 잠재력형 (Flexible Potential)');
+          setDominantType('🌱 무한 잠재력형 (Budding Potential)');
           setTypeDescription('아직 특정한 기질이 고착화되지 않은 유연하고 열린 상태입니다. 앞으로 어떤 코칭을 받고 어떤 환경에 놓이느냐에 따라 다양한 강점을 흡수하고 폭발적으로 성장할 수 있는 도화지 같은 기질입니다.');
           setBehaviorList(['특정 패턴에 얽매이지 않는 자유로운 반응', '에너지를 비축하며 상황을 관망함', '직관과 경험을 바탕으로 한 유연한 탐색']);
         }
@@ -98,7 +98,7 @@
                     <div className="flex justify-between items-center mb-2">
                       <label className="text-gray-700 font-bold">동기 조절 (M)</label>
                       <span className={`font-semibold px-2 py-1 rounded-md text-sm ${mScore >= 50 ? 'bg-red-100 text-red-700' : 'bg-gray-200 text-gray-600'}`}>
-                        {mScore >= 50 ? '50점 이상 (에너지/근성 O)' : '50점 미만 (에너지 비축)'}
+                        {mScore >= 50 ? '50점 이상 (수정이력·학습독립성 O)' : '50점 미만 (힌트 의존·수정 소극적)'}
                       </span>
                     </div>
                     <input
@@ -107,7 +107,7 @@
                       className="w-full accent-red-500 cursor-pointer"
                     />
                     <p className="text-xs mt-1 font-medium text-gray-500">
-                      {mScore >= 50 ? '✅ #빠른도전 #재도전_근성 #실수극복' : '☑️ #유연한_목표설정 #에너지_비축 #신중한_시작'}
+                      {mScore >= 50 ? '✅ #스스로_실수발견 #오답_자기교정 #힌트없이_해결' : '☑️ #힌트_의존 #수정_소극적 #외부도움_선호'}
                     </p>
                   </div>
 
@@ -115,7 +115,7 @@
                     <div className="flex justify-between items-center mb-2">
                       <label className="text-gray-700 font-bold">행동 조절 (B)</label>
                       <span className={`font-semibold px-2 py-1 rounded-md text-sm ${bScore >= 50 ? 'bg-blue-100 text-blue-700' : 'bg-gray-200 text-gray-600'}`}>
-                        {bScore >= 50 ? '50점 이상 (신중함/일관성 O)' : '50점 미만 (자유로운 탐색)'}
+                        {bScore >= 50 ? '50점 이상 (몰입유지·공부끈기·재시도 O)' : '50점 미만 (이탈·포기·재도전 소극적)'}
                       </span>
                     </div>
                     <input
@@ -124,7 +124,7 @@
                       className="w-full accent-blue-500 cursor-pointer"
                     />
                     <p className="text-xs mt-1 font-medium text-gray-500">
-                      {bScore >= 50 ? '✅ #긴_숙고시간 #화면이탈_없음 #오답최소화' : '☑️ #유연한_탐색 #빠른_판단 #자유로운_시선'}
+                      {bScore >= 50 ? '✅ #딴짓없는_집중 #끝까지_완주 #실패후_재도전' : '☑️ #화면이탈_있음 #중도포기_경향 #재도전_소극적'}
                     </p>
                   </div>
 
@@ -132,7 +132,7 @@
                     <div className="flex justify-between items-center mb-2">
                       <label className="text-gray-700 font-bold">인지 조절 (C)</label>
                       <span className={`font-semibold px-2 py-1 rounded-md text-sm ${cScore >= 50 ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600'}`}>
-                        {cScore >= 50 ? '50점 이상 (메타인지/전략 O)' : '50점 미만 (직관적 해결)'}
+                        {cScore >= 50 ? '50점 이상 (생각속도·공부리듬 O)' : '50점 미만 (느린 반응·불규칙한 페이스)'}
                       </span>
                     </div>
                     <input
@@ -141,7 +141,7 @@
                       className="w-full accent-green-500 cursor-pointer"
                     />
                     <p className="text-xs mt-1 font-medium text-gray-500">
-                      {cScore >= 50 ? '✅ #적재적소_힌트 #어려운문제_인식 #메타인지' : '☑️ #경험적_학습 #직관적_해결 #도움요청_최소화'}
+                      {cScore >= 50 ? '✅ #또래보다_빠른반응 #일정한_페이스 #안정적_사고흐름' : '☑️ #느린_처리속도 #들쭉날쭉_페이스 #사고흐름_불안정'}
                     </p>
                   </div>
                 </div>
