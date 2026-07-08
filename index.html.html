@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>학습조절능력 기질 시뮬레이터</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fadeInSlide {
+      from { opacity: 0; transform: translateY(-1rem); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-in { animation: fadeInSlide 0.5s ease-out; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const TemperamentSimulator = () => {
+      const [mScore, setMScore] = useState(50);
+      const [bScore, setBScore] = useState(50);
+      const [cScore, setCScore] = useState(50);
+      const [dominantType, setDominantType] = useState('');
+      const [typeDescription, setTypeDescription] = useState('');
+      const [behaviorList, setBehaviorList] = useState([]);
+      const [showMap, setShowMap] = useState(false);
+
+      const allTypes = [
+        { id: 1, m: true, b: true, c: true, icon: '👑', name: '완벽한 밸런스형', desc: '도전, 신중함, 전략을 모두 갖춘 완성형 우등생', color: 'bg-purple-50 border-purple-200 text-purple-700' },
+        { id: 2, m: true, b: true, c: false, icon: '🎯', name: '실행력 강한 모범생형', desc: '빠른 도전과 꼼꼼한 행동 조절을 겸비', color: 'bg-blue-50 border-blue-200 text-blue-700' },
+        { id: 3, m: true, b: false, c: true, icon: '⚡', name: '전략적 도전자형', desc: '에너지와 메타인지를 갖춘 영리한 행동파', color: 'bg-teal-50 border-teal-200 text-teal-700' },
+        { id: 4, m: true, b: false, c: false, icon: '🔥', name: '순수 민첩한 도전자형', desc: '실패를 두려워하지 않는 강력한 돌파력', color: 'bg-red-50 border-red-200 text-red-700' },
+        { id: 5, m: false, b: true, c: true, icon: '🦉', name: '신중한 학자형', desc: '완벽하게 분석하고 전략적으로 움직임', color: 'bg-indigo-50 border-indigo-200 text-indigo-700' },
+        { id: 6, m: false, b: true, c: false, icon: '🔍', name: '순수 신중한 탐색가형', desc: '완벽한 확신이 설 때만 신중하게 행동', color: 'bg-sky-50 border-sky-200 text-sky-700' },
+        { id: 7, m: false, b: false, c: true, icon: '♟️', name: '순수 자기주도적 전략가형', desc: '도움이 필요한 순간을 정확히 아는 전략가', color: 'bg-emerald-50 border-emerald-200 text-emerald-700' },
+        { id: 8, m: false, b: false, c: false, icon: '🌱', name: '유연한 잠재력형', desc: '틀에 얽매이지 않고 상황을 유연하게 관망', color: 'bg-stone-50 border-stone-200 text-stone-700' }
+      ];
+
+      useEffect(() => {
+        const isM = mScore >= 50;
+        const isB = bScore >= 50;
+        const isC = cScore >= 50;
+
+        if (isM && isB && isC) {
+          setDominantType('👑 완벽한 밸런스형 (All-Rounder)');
+          setTypeDescription('도전 에너지, 신중함, 전략적 사고를 모두 갖춘 이상적인 우등생 기질입니다. 어떤 난이도의 과제가 주어져도 스스로 멘탈을 관리하며 안정적으로 해결해 냅니다.');
+          setBehaviorList(['실패를 두려워하지 않는 과감한 도전', '문제를 꼼꼼히 살피는 높은 집중력', '필요할 때만 힌트를 쓰는 고도의 전략성']);
+        } else if (isM && isB && !isC) {
+          setDominantType('🎯 실행력 강한 모범생형 (Action-Oriented Achiever)');
+          setTypeDescription('빠르게 도전하면서도 오답을 최소화하려는 꼼꼼함을 겸비했습니다. 교과 과정에서 성실하게 과제를 수행하며 눈에 띄는 높은 성취를 보일 확률이 높습니다.');
+          setBehaviorList(['오답에 좌절하지 않고 즉각 재도전', '화면 이탈 없는 강한 착석 유지력', '복잡한 계산보다 직관적인 문제 해결 선호']);
+        } else if (isM && !isB && isC) {
+          setDominantType('⚡ 전략적 도전자형 (Strategic Challenger)');
+          setTypeDescription('에너지가 넘치면서도 문제의 난이도를 파악하는 메타인지의 눈이 매섭습니다. 혼자 풀 수 있는 것과 도움을 받을 것을 영리하게 구분하여 매우 빠르게 목표를 달성합니다.');
+          setBehaviorList(['문제 진입 후 망설임 없는 빠른 터치', '어려운 문제에서만 전략적으로 힌트 사용', '정답을 향한 속도감 있는 실행력']);
+        } else if (isM && !isB && !isC) {
+          setDominantType('🔥 순수 민첩한 도전자형 (Pure Agile Challenger)');
+          setTypeDescription('오답을 두려워하지 않고 끊임없이 부딪히며 배우는 강력한 행동파입니다. 초등 교실에서 가장 먼저 손을 들고 참여하는, 자기 확신과 에너지가 넘치는 아이로 성장합니다.');
+          setBehaviorList(['문제 진입 후 첫 터치가 매우 빠름', '틀려도 망설임 없이 즉각 재도전', '정답을 맞힐 때까지 포기하지 않는 근성']);
+        } else if (!isM && isB && isC) {
+          setDominantType('🦉 신중한 학자형 (Deliberate Scholar)');
+          setTypeDescription('행동하기 전 완벽하게 분석하고, 아는 것과 모르는 것을 명확히 구분합니다. 정답을 누르기까지 속도는 조금 느릴 수 있지만, 초등 고학년으로 갈수록 엄청난 학업 잠재력을 터뜨립니다.');
+          setBehaviorList(['첫 터치 전 화면을 오래 관찰하고 분석함', '적재적소에만 힌트를 호출하여 단서 획득', '스스로 완벽히 이해할 때까지 신중하게 고민']);
+        } else if (!isM && isB && !isC) {
+          setDominantType('🔍 순수 신중한 탐색가형 (Pure Deliberate Explorer)');
+          setTypeDescription('시각적 단서를 꼼꼼히 살피고 완벽한 확신이 섰을 때만 움직이는 정밀한 탐색가입니다. 덤벙대지 않고 꼼꼼하게 교과 과정을 소화하는 훌륭한 우등생의 자질을 갖추었습니다.');
+          setBehaviorList(['첫 터치 전 숙고하는 시간이 긺', '의미 없는 화면 터치나 이탈이 거의 없음', '한 번 누를 때 매우 신중하게 정답을 선택함']);
+        } else if (!isM && !isB && isC) {
+          setDominantType('♟️ 순수 자기주도적 전략가형 (Pure Strategic Thinker)');
+          setTypeDescription('자신이 모르는 부분을 스스로 돕기 위해 영리하게 힌트를 활용하는 메타인지 능력이 돋보입니다. 무작정 부딪히기보다, 효율적인 방법을 찾아 학습의 주도권을 쥐고 나아갑니다.');
+          setBehaviorList(['무작정 힌트 버튼을 연타하지 않음', '난이도가 높은 문항을 스스로 인지함', '도움을 받아 스스로 해결하려는 독립성이 강함']);
+        } else {
+          setDominantType('🌱 유연한 잠재력형 (Flexible Potential)');
+          setTypeDescription('아직 특정한 기질이 고착화되지 않은 유연하고 열린 상태입니다. 앞으로 어떤 코칭을 받고 어떤 환경에 놓이느냐에 따라 다양한 강점을 흡수하고 폭발적으로 성장할 수 있는 도화지 같은 기질입니다.');
+          setBehaviorList(['특정 패턴에 얽매이지 않는 자유로운 반응', '에너지를 비축하며 상황을 관망함', '직관과 경험을 바탕으로 한 유연한 탐색']);
+        }
+      }, [mScore, bScore, cScore]);
+
+      return (
+        <div className="flex flex-col items-center py-10 px-4 bg-gray-50 min-h-screen font-sans">
+          <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-5xl flex flex-col gap-8">
+
+            <div className="flex flex-col md:flex-row gap-8">
+              <div className="flex-1 space-y-8">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-800 mb-2">행동 로그 시뮬레이터</h2>
+                  <p className="text-sm text-gray-500">아이가 퀴즈를 풀며 남긴 행태 데이터를 50점 기준으로 조작해 보세요. 2×2×2 조합으로 총 8가지 기질이 판독됩니다.</p>
+                </div>
+
+                <div className="space-y-6">
+                  <div className={`p-4 rounded-xl border transition-colors duration-300 ${mScore >= 50 ? 'bg-red-50 border-red-200' : 'bg-gray-50 border-gray-200'}`}>
+                    <div className="flex justify-between items-center mb-2">
+                      <label className="text-gray-700 font-bold">동기 조절 (M)</label>
+                      <span className={`font-semibold px-2 py-1 rounded-md text-sm ${mScore >= 50 ? 'bg-red-100 text-red-700' : 'bg-gray-200 text-gray-600'}`}>
+                        {mScore >= 50 ? '50점 이상 (에너지/근성 O)' : '50점 미만 (에너지 비축)'}
+                      </span>
+                    </div>
+                    <input
+                      type="range" min="0" max="100" value={mScore}
+                      onChange={(e) => setMScore(parseInt(e.target.value))}
+                      className="w-full accent-red-500 cursor-pointer"
+                    />
+                    <p className="text-xs mt-1 font-medium text-gray-500">
+                      {mScore >= 50 ? '✅ #빠른도전 #재도전_근성 #실수극복' : '☑️ #유연한_목표설정 #에너지_비축 #신중한_시작'}
+                    </p>
+                  </div>
+
+                  <div className={`p-4 rounded-xl border transition-colors duration-300 ${bScore >= 50 ? 'bg-blue-50 border-blue-200' : 'bg-gray-50 border-gray-200'}`}>
+                    <div className="flex justify-between items-center mb-2">
+                      <label className="text-gray-700 font-bold">행동 조절 (B)</label>
+                      <span className={`font-semibold px-2 py-1 rounded-md text-sm ${bScore >= 50 ? 'bg-blue-100 text-blue-700' : 'bg-gray-200 text-gray-600'}`}>
+                        {bScore >= 50 ? '50점 이상 (신중함/일관성 O)' : '50점 미만 (자유로운 탐색)'}
+                      </span>
+                    </div>
+                    <input
+                      type="range" min="0" max="100" value={bScore}
+                      onChange={(e) => setBScore(parseInt(e.target.value))}
+                      className="w-full accent-blue-500 cursor-pointer"
+                    />
+                    <p className="text-xs mt-1 font-medium text-gray-500">
+                      {bScore >= 50 ? '✅ #긴_숙고시간 #화면이탈_없음 #오답최소화' : '☑️ #유연한_탐색 #빠른_판단 #자유로운_시선'}
+                    </p>
+                  </div>
+
+                  <div className={`p-4 rounded-xl border transition-colors duration-300 ${cScore >= 50 ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
+                    <div className="flex justify-between items-center mb-2">
+                      <label className="text-gray-700 font-bold">인지 조절 (C)</label>
+                      <span className={`font-semibold px-2 py-1 rounded-md text-sm ${cScore >= 50 ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600'}`}>
+                        {cScore >= 50 ? '50점 이상 (메타인지/전략 O)' : '50점 미만 (직관적 해결)'}
+                      </span>
+                    </div>
+                    <input
+                      type="range" min="0" max="100" value={cScore}
+                      onChange={(e) => setCScore(parseInt(e.target.value))}
+                      className="w-full accent-green-500 cursor-pointer"
+                    />
+                    <p className="text-xs mt-1 font-medium text-gray-500">
+                      {cScore >= 50 ? '✅ #적재적소_힌트 #어려운문제_인식 #메타인지' : '☑️ #경험적_학습 #직관적_해결 #도움요청_최소화'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex-1 flex flex-col justify-center">
+                <div className="p-6 rounded-2xl border-2 transition-all duration-300 shadow-md h-full flex flex-col justify-center bg-indigo-50 border-indigo-200">
+                  <div className="text-center mb-6">
+                    <span className="inline-block px-3 py-1 bg-white rounded-full text-xs font-bold text-gray-500 shadow-sm mb-3 border border-indigo-100">
+                      실시간 입체 기질 판독 결과
+                    </span>
+                    <h3 className="text-2xl font-black mb-4 text-indigo-700 leading-tight">
+                      {dominantType}
+                    </h3>
+                    <p className="text-gray-700 text-sm leading-relaxed text-left bg-white p-4 rounded-lg shadow-sm">
+                      {typeDescription}
+                    </p>
+                  </div>
+
+                  <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 mt-auto">
+                    <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center">
+                      <svg className="w-4 h-4 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                      발견된 핵심 행동 패턴 (Trigger Events)
+                    </h4>
+                    <ul className="space-y-2">
+                      {behaviorList.map((behavior, index) => (
+                        <li key={index} className="flex items-start text-sm text-gray-600">
+                          <span className="text-indigo-400 mr-2">▪</span>
+                          {behavior}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 border-t border-gray-200 pt-8">
+              <div className="flex justify-between items-end mb-6">
+                <div>
+                  <h3 className="text-xl font-bold text-gray-800">8 Type 전체 기질 맵 (Total Matrix)</h3>
+                  <p className="text-xs text-gray-500 mt-1">2(동기) × 2(행동) × 2(인지) 조합으로 도출되는 8가지 경우의 수</p>
+                </div>
+                <button
+                  onClick={() => setShowMap(!showMap)}
+                  className="text-sm px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors font-semibold"
+                >
+                  {showMap ? '맵 숨기기 ▲' : '전체 맵 보기 ▼'}
+                </button>
+              </div>
+
+              {showMap && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-in">
+                  {allTypes.map((type) => {
+                    const isActive = (mScore >= 50) === type.m && (bScore >= 50) === type.b && (cScore >= 50) === type.c;
+
+                    return (
+                      <div key={type.id} className={`p-4 rounded-xl border-2 transition-all ${isActive ? type.color + ' shadow-md scale-105' : 'bg-white border-gray-100 opacity-60'}`}>
+                        <div className="text-2xl mb-2">{type.icon}</div>
+                        <h4 className="font-bold text-sm mb-1">{type.name}</h4>
+                        <p className="text-xs text-gray-500 mb-3 line-clamp-2">{type.desc}</p>
+
+                        <div className="flex gap-1 text-[10px] font-bold">
+                          <span className={`px-1.5 py-0.5 rounded ${type.m ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-400'}`}>
+                            {type.m ? 'M 이상' : 'M 미만'}
+                          </span>
+                          <span className={`px-1.5 py-0.5 rounded ${type.b ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-400'}`}>
+                            {type.b ? 'B 이상' : 'B 미만'}
+                          </span>
+                          <span className={`px-1.5 py-0.5 rounded ${type.c ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'}`}>
+                            {type.c ? 'C 이상' : 'C 미만'}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+          </div>
+        </div>
+      );
+    };
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<TemperamentSimulator />);
+  </script>
+</body>
+</html>
