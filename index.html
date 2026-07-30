@@ -23,12 +23,13 @@
     const { useState, useEffect } = React;
 
     const TemperamentSimulator = () => {
-      const [mScore, setMScore] = useState(50);
-      const [bScore, setBScore] = useState(50);
-      const [cScore, setCScore] = useState(50);
+      const [mScore, setMScore] = useState(75);
+      const [bScore, setBScore] = useState(75);
+      const [cScore, setCScore] = useState(75);
       const [dominantType, setDominantType] = useState('');
       const [typeDescription, setTypeDescription] = useState('');
       const [behaviorList, setBehaviorList] = useState([]);
+      const [roadmapList, setRoadmapList] = useState([]);
       const [showMap, setShowMap] = useState(false);
 
       const allTypes = [
@@ -51,34 +52,42 @@
           setDominantType('👑 올라운드 밸런스형 (All-Round Balancer)');
           setTypeDescription('집중력, 두뇌 회전, 자립심을 모두 갖춘 이상적인 우등생 기질입니다. 어떤 난이도의 과제가 주어져도 스스로 멘탈을 관리하며 안정적으로 해결해 냅니다.');
           setBehaviorList(['딴짓 없이 끝까지 완주하는 몰입유지력과 공부끈기', '또래보다 빠른 생각속도와 일정한 공부리듬', '스스로 실수를 고치고 힌트 없이 해결하는 자립심']);
+          setRoadmapList(['상위 레벨 콘텐츠 조기 오픈으로 도전 욕구를 지속 자극', '또래 발화 리더 역할 부여 → 성취를 표현의 기회로 확장', '월별 성장리포트로 최상위 페이스 유지 여부만 모니터링']);
         } else if (isM && isB && !isC) {
           setDominantType('🎯 성실한 자립형 (Sincere Independent)');
           setTypeDescription('진득하게 앉아 끝까지 해내는 끈기와, 스스로 실수를 고치고 혼자 해결하려는 의지를 겸비했습니다. 처리 속도는 아직 발전 중이지만, 성실함과 자립심이 탄탄해 꾸준히 성취를 쌓아가는 유형입니다.');
           setBehaviorList(['오답에 좌절하지 않고 즉각 재도전하는 재시도근성', '딴짓 없이 끝까지 완주하는 강한 공부끈기', '스스로 실수를 발견하고 고치는 수정이력']);
+          setRoadmapList(['타이머 게임형 퀴즈로 처리속도를 놀이처럼 끌어올리기', '음원 따라 말하기(섀도잉) 반복으로 반응속도 자연 향상', '끈기가 무기이므로 분량보다 속도 중심 미션으로 설계']);
         } else if (isM && !isB && isC) {
           setDominantType('⚡ 영리한 해결사형 (Clever Solver)');
           setTypeDescription('빠른 두뇌 회전과 스스로 해결하려는 자립심이 돋보입니다. 다만 흥미가 떨어지면 집중이 흐트러질 수 있어, 몰입을 유지시켜주는 환경이 뒷받침되면 폭발적인 성과를 냅니다.');
           setBehaviorList(['또래보다 빠른 생각속도로 문제에 즉각 반응', '힌트 없이 혼자 해결하는 높은 학습독립성', '일정한 공부리듬으로 페이스를 안정적으로 유지']);
+          setRoadmapList(['짧은 단위 미션 → 즉시 보상 루프로 몰입 시간을 점진 확장', '흥미 주제(스토리·게임형 콘텐츠) 우선 배치로 이탈 방지', '학습 시간을 고정 루틴화하여 완주 습관 만들기']);
         } else if (isM && !isB && !isC) {
           setDominantType('🔥 당찬 자립형 (Bold Independent)');
           setTypeDescription('스스로 실수를 고치고 힌트 없이 혼자 해내려는 의지가 매우 강한 아이입니다. 집중 지속과 처리 속도는 아직 자라는 중이지만, 이 강한 자립심이야말로 학습 성장의 가장 단단한 엔진입니다.');
           setBehaviorList(['스스로 실수를 발견하고 즉시 교정하는 수정이력', '힌트 없이 부딪히며 해결하려는 학습독립성', '자기 확신이 강해 주도적으로 문제에 접근함']);
+          setRoadmapList(['혼자 해내려는 의지를 칭찬 포인트로 → 자신감 기반 확장', '파닉스 기초 반복으로 처리속도의 토대를 탄탄하게', '5분 몰입 → 10분 몰입 단계별 착석 목표로 집중력 훈련']);
         } else if (!isM && isB && isC) {
           setDominantType('🦉 차분한 탐구형 (Calm Explorer)');
           setTypeDescription('흔들림 없는 집중력과 빠르고 안정적인 사고 흐름을 함께 갖췄습니다. 아직 힌트에 기대는 경향이 있지만, 혼자 해결하는 성공 경험이 쌓이면 최상위권 잠재력이 터지는 유형입니다.');
           setBehaviorList(['딴짓 없이 화면에 집중하는 높은 몰입유지력', '일정한 공부리듬으로 페이스를 흔들림 없이 유지', '포기 않고 끝까지 완주하는 공부끈기']);
+          setRoadmapList(['힌트 없이 성공하는 경험을 의도적으로 설계 (쉬운 문항부터)', '"혼자 해냈네!" 즉각 피드백으로 학습독립성 강화', '자기교정 습관을 위해 확인 전 재점검 루틴 지도']);
         } else if (!isM && isB && !isC) {
           setDominantType('🌳 우직한 성실형 (Steadfast Worker)');
           setTypeDescription('속도보다 끈기로 승부하는 진득한 노력파입니다. 딴짓 없이 끝까지 완주하는 엉덩이 힘이 최대 강점이며, 처리 속도와 자립심은 반복 경험을 통해 자연스럽게 따라오는 유형입니다.');
           setBehaviorList(['딴짓 없이 학습에만 집중하는 몰입유지력', '흔들림 없이 끝까지 완주하는 공부끈기', '실패 앞에서도 다시 도전하는 재시도근성']);
+          setRoadmapList(['속도 압박 없는 반복 학습으로 성공 경험 누적이 최우선', '음원·이미지 결합 콘텐츠로 처리속도를 감각적으로 향상', '작은 성취마다 보상하여 끈기를 자존감으로 연결']);
         } else if (!isM && !isB && isC) {
           setDominantType('💡 명민한 두뇌형 (Bright Thinker)');
           setTypeDescription('또래보다 빠른 생각속도와 일정한 사고 페이스가 돋보이는 두뇌파입니다. 다만 진득하게 앉아있는 힘과 혼자 해결하려는 의지가 함께 자라면 잠재력이 완성되는 유형입니다.');
           setBehaviorList(['또래보다 빠른 생각속도로 문제를 처리', '일정한 공부리듬으로 페이스를 안정적으로 유지', '흥미 있는 과제에서 순간 집중력이 폭발함']);
+          setRoadmapList(['빠른 두뇌에 맞는 난이도 상향 배치로 지루함 차단', '완주 시에만 열리는 보상 구조로 끝까지 푸는 습관 형성', '힌트 사용 전 "한 번 더 생각" 규칙으로 자립심 훈련']);
         } else {
           setDominantType('🌱 무한 잠재력형 (Budding Potential)');
           setTypeDescription('아직 특정한 기질이 고착화되지 않은 유연하고 열린 상태입니다. 앞으로 어떤 코칭을 받고 어떤 환경에 놓이느냐에 따라 다양한 강점을 흡수하고 폭발적으로 성장할 수 있는 도화지 같은 기질입니다.');
           setBehaviorList(['특정 패턴에 얽매이지 않는 자유로운 반응', '에너지를 비축하며 상황을 관망함', '직관과 경험을 바탕으로 한 유연한 탐색']);
+          setRoadmapList(['부담 없는 최저 난이도부터 시작해 성공 경험 우선 축적', '아이가 반응하는 콘텐츠 유형(노래·게임·스토리) 관찰 후 집중 배치', '1:1 관심 코칭으로 학습 정서부터 안정화 → 기질 발현 유도']);
         }
       }, [mScore, bScore, cScore]);
 
@@ -90,57 +99,84 @@
               <div className="flex-1 space-y-8">
                 <div>
                   <h2 className="text-2xl font-bold text-gray-800 mb-2">행동 로그 시뮬레이터</h2>
-                  <p className="text-sm text-gray-500">아이가 퀴즈를 풀며 남긴 행태 데이터를 50점 기준으로 조작해 보세요. 2×2×2 조합으로 총 8가지 기질이 판독됩니다.</p>
+                  <p className="text-sm text-gray-500">아이가 퀴즈를 풀며 남긴 학습피지컬 지표를 50점 기준으로 선택해 보세요. 2×2×2 조합으로 총 8가지 기질이 판독됩니다.</p>
                 </div>
 
                 <div className="space-y-6">
                   <div className={`p-4 rounded-xl border transition-colors duration-300 ${mScore >= 50 ? 'bg-red-50 border-red-200' : 'bg-gray-50 border-gray-200'}`}>
-                    <div className="flex justify-between items-center mb-2">
+                    <div className="flex justify-between items-center mb-3">
                       <label className="text-gray-700 font-bold">동기 조절 (M)</label>
-                      <span className={`font-semibold px-2 py-1 rounded-md text-sm ${mScore >= 50 ? 'bg-red-100 text-red-700' : 'bg-gray-200 text-gray-600'}`}>
-                        {mScore >= 50 ? '50점 이상 (수정이력·학습독립성 O)' : '50점 미만 (힌트 의존·수정 소극적)'}
+                      <span className={`font-semibold px-2 py-1 rounded-md text-xs ${mScore >= 50 ? 'bg-red-100 text-red-700' : 'bg-gray-200 text-gray-600'}`}>
+                        {mScore >= 50 ? '수정이력·학습독립성 O' : '힌트 의존·수정 소극적'}
                       </span>
                     </div>
-                    <input
-                      type="range" min="0" max="100" value={mScore}
-                      onChange={(e) => setMScore(parseInt(e.target.value))}
-                      className="w-full accent-red-500 cursor-pointer"
-                    />
-                    <p className="text-xs mt-1 font-medium text-gray-500">
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => setMScore(75)}
+                        className={`py-2.5 rounded-lg text-sm font-bold border-2 transition-all ${mScore >= 50 ? 'bg-red-500 border-red-500 text-white shadow-md' : 'bg-white border-gray-200 text-gray-400 hover:border-red-300'}`}
+                      >
+                        50점 이상
+                      </button>
+                      <button
+                        onClick={() => setMScore(25)}
+                        className={`py-2.5 rounded-lg text-sm font-bold border-2 transition-all ${mScore < 50 ? 'bg-gray-600 border-gray-600 text-white shadow-md' : 'bg-white border-gray-200 text-gray-400 hover:border-gray-400'}`}
+                      >
+                        50점 미만
+                      </button>
+                    </div>
+                    <p className="text-xs mt-2 font-medium text-gray-500">
                       {mScore >= 50 ? '✅ #스스로_실수발견 #오답_자기교정 #힌트없이_해결' : '☑️ #힌트_의존 #수정_소극적 #외부도움_선호'}
                     </p>
                   </div>
 
                   <div className={`p-4 rounded-xl border transition-colors duration-300 ${bScore >= 50 ? 'bg-blue-50 border-blue-200' : 'bg-gray-50 border-gray-200'}`}>
-                    <div className="flex justify-between items-center mb-2">
+                    <div className="flex justify-between items-center mb-3">
                       <label className="text-gray-700 font-bold">행동 조절 (B)</label>
-                      <span className={`font-semibold px-2 py-1 rounded-md text-sm ${bScore >= 50 ? 'bg-blue-100 text-blue-700' : 'bg-gray-200 text-gray-600'}`}>
-                        {bScore >= 50 ? '50점 이상 (몰입유지·공부끈기·재시도 O)' : '50점 미만 (이탈·포기·재도전 소극적)'}
+                      <span className={`font-semibold px-2 py-1 rounded-md text-xs ${bScore >= 50 ? 'bg-blue-100 text-blue-700' : 'bg-gray-200 text-gray-600'}`}>
+                        {bScore >= 50 ? '몰입유지·공부끈기·재시도 O' : '이탈·포기·재도전 소극적'}
                       </span>
                     </div>
-                    <input
-                      type="range" min="0" max="100" value={bScore}
-                      onChange={(e) => setBScore(parseInt(e.target.value))}
-                      className="w-full accent-blue-500 cursor-pointer"
-                    />
-                    <p className="text-xs mt-1 font-medium text-gray-500">
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => setBScore(75)}
+                        className={`py-2.5 rounded-lg text-sm font-bold border-2 transition-all ${bScore >= 50 ? 'bg-blue-500 border-blue-500 text-white shadow-md' : 'bg-white border-gray-200 text-gray-400 hover:border-blue-300'}`}
+                      >
+                        50점 이상
+                      </button>
+                      <button
+                        onClick={() => setBScore(25)}
+                        className={`py-2.5 rounded-lg text-sm font-bold border-2 transition-all ${bScore < 50 ? 'bg-gray-600 border-gray-600 text-white shadow-md' : 'bg-white border-gray-200 text-gray-400 hover:border-gray-400'}`}
+                      >
+                        50점 미만
+                      </button>
+                    </div>
+                    <p className="text-xs mt-2 font-medium text-gray-500">
                       {bScore >= 50 ? '✅ #딴짓없는_집중 #끝까지_완주 #실패후_재도전' : '☑️ #화면이탈_있음 #중도포기_경향 #재도전_소극적'}
                     </p>
                   </div>
 
                   <div className={`p-4 rounded-xl border transition-colors duration-300 ${cScore >= 50 ? 'bg-green-50 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
-                    <div className="flex justify-between items-center mb-2">
+                    <div className="flex justify-between items-center mb-3">
                       <label className="text-gray-700 font-bold">인지 조절 (C)</label>
-                      <span className={`font-semibold px-2 py-1 rounded-md text-sm ${cScore >= 50 ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600'}`}>
-                        {cScore >= 50 ? '50점 이상 (생각속도·공부리듬 O)' : '50점 미만 (느린 반응·불규칙한 페이스)'}
+                      <span className={`font-semibold px-2 py-1 rounded-md text-xs ${cScore >= 50 ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600'}`}>
+                        {cScore >= 50 ? '생각속도·공부리듬 O' : '느린 반응·불규칙한 페이스'}
                       </span>
                     </div>
-                    <input
-                      type="range" min="0" max="100" value={cScore}
-                      onChange={(e) => setCScore(parseInt(e.target.value))}
-                      className="w-full accent-green-500 cursor-pointer"
-                    />
-                    <p className="text-xs mt-1 font-medium text-gray-500">
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        onClick={() => setCScore(75)}
+                        className={`py-2.5 rounded-lg text-sm font-bold border-2 transition-all ${cScore >= 50 ? 'bg-green-500 border-green-500 text-white shadow-md' : 'bg-white border-gray-200 text-gray-400 hover:border-green-300'}`}
+                      >
+                        50점 이상
+                      </button>
+                      <button
+                        onClick={() => setCScore(25)}
+                        className={`py-2.5 rounded-lg text-sm font-bold border-2 transition-all ${cScore < 50 ? 'bg-gray-600 border-gray-600 text-white shadow-md' : 'bg-white border-gray-200 text-gray-400 hover:border-gray-400'}`}
+                      >
+                        50점 미만
+                      </button>
+                    </div>
+                    <p className="text-xs mt-2 font-medium text-gray-500">
                       {cScore >= 50 ? '✅ #또래보다_빠른반응 #일정한_페이스 #안정적_사고흐름' : '☑️ #느린_처리속도 #들쭉날쭉_페이스 #사고흐름_불안정'}
                     </p>
                   </div>
@@ -161,7 +197,7 @@
                     </p>
                   </div>
 
-                  <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 mt-auto">
+                  <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
                     <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center">
                       <svg className="w-4 h-4 mr-2 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                       발견된 핵심 행동 패턴 (Trigger Events)
@@ -171,6 +207,21 @@
                         <li key={index} className="flex items-start text-sm text-gray-600">
                           <span className="text-indigo-400 mr-2">▪</span>
                           {behavior}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="bg-gradient-to-br from-violet-600 to-indigo-600 rounded-xl p-5 shadow-md mt-4">
+                    <h4 className="text-sm font-bold text-white mb-3 flex items-center">
+                      <svg className="w-4 h-4 mr-2 text-violet-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                      잉글리시팝 지도 로드맵 (Coaching Roadmap)
+                    </h4>
+                    <ul className="space-y-2.5">
+                      {roadmapList.map((roadmap, index) => (
+                        <li key={index} className="flex items-start text-sm text-violet-50 leading-snug">
+                          <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/20 text-white text-[10px] font-bold flex items-center justify-center mr-2.5 mt-0.5">{index + 1}</span>
+                          {roadmap}
                         </li>
                       ))}
                     </ul>
