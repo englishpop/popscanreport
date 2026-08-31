@@ -8,87 +8,136 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    @keyframes fadeInSlide {
-      from { opacity: 0; transform: translateY(-1rem); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .animate-in { animation: fadeInSlide 0.5s ease-out; }
-  </style>
 </head>
 <body>
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useEffect } = React;
+    const { useState, useMemo } = React;
+
+    // ─────────────────────────────────────────────────────────
+    // 판정 로직 (v2 · 2026-08)
+    //  1단계: 지표 → 축.  축 O ⇔ 소속 판정 지표 전부 ≥ 50점 (AND)
+    //         행동 O ⇔ 몰입유지력 ≥50 AND 공부끈기 ≥50 AND 재시도근성 ≥50
+    //         동기 O ⇔ 수정이력 ≥50 AND 학습독립성 ≥50
+    //         ※ X = "하나라도 50 미만" (전부 낮음이 아님)
+    //  2단계: 축 → 유형.  행동 × 동기 2×2 = 4유형
+    //  인지축: POP SCAN 단계에서는 공부리듬 미측정 → 유형 판정 제외.
+    //          생각속도는 참고 표기, 공부리듬과 함께 성장 리포트에서 종합 판독.
+    // ─────────────────────────────────────────────────────────
+
+    const INDICATORS = {
+      behavior: [
+        { key: 'focus', label: '몰입유지력', desc: '딴짓 없이 학습에만 집중하는 힘' },
+        { key: 'grit', label: '공부끈기', desc: '흔들림 없이 끝까지 완주하는 힘' },
+        { key: 'retry', label: '재시도근성', desc: '실패 앞에서도 다시 일어서는 힘' },
+      ],
+      motivation: [
+        { key: 'selfFix', label: '수정이력', desc: '스스로 실수를 발견하고 정답으로 고치는 힘' },
+        { key: 'indep', label: '학습독립성', desc: '힌트 없이 내 힘으로 해결하는 힘' },
+      ],
+    };
+
+    const ALL_TYPES = [
+      { id: 1, b: true,  m: true,  icon: '🎯', name: '성실한 자립형',  en: 'Sincere Independent', desc: '진득한 끈기와 스스로 해결하려는 의지를 겸비' },
+      { id: 2, b: true,  m: false, icon: '🌳', name: '우직한 성실형',  en: 'Steadfast Worker',    desc: '끝까지 포기하지 않는 진득한 엉덩이 힘의 소유자' },
+      { id: 3, b: false, m: true,  icon: '🔥', name: '당찬 자립형',    en: 'Bold Independent',    desc: '스스로 고치고 혼자 해내려는 의지가 강한 아이' },
+      { id: 4, b: false, m: false, icon: '🌱', name: '무한 잠재력형',  en: 'Budding Potential',   desc: '학습 습관과 자립심이 이제 형성되기 시작하는 출발점 기질' },
+    ];
+
+    const TYPE_CONTENT = {
+      '1': {
+        description: '진득하게 앉아 끝까지 해내는 끈기와, 스스로 실수를 고치고 혼자 해결하려는 의지를 함께 갖췄습니다. 학습 습관과 자립심이라는 두 개의 엔진이 맞물려, 어떤 콘텐츠를 만나도 꾸준히 성취를 쌓아가는 유형입니다.',
+        behaviors: [
+          '딴짓 없이 끝까지 완주하는 몰입유지력과 공부끈기',
+          '오답에 좌절하지 않고 즉각 재도전하는 재시도근성',
+          '확인 전 스스로 실수를 찾아 고치는 수정이력과 힌트 없이 해결하는 학습독립성',
+        ],
+        roadmap: [
+          '현재 습관을 흔들지 않는 선에서 난이도·분량을 점진 상향해 도전 욕구 자극',
+          '스스로 계획하고 완수하는 자기주도 미션 부여 → 성취를 주도성으로 확장',
+          '분기별 성장리포트로 두 축의 유지 여부만 모니터링',
+        ],
+      },
+      '2': {
+        description: '딴짓 없이 자리를 지키고 끝까지 완주하는 힘이 단단한 노력파입니다. 스스로 시작하고 혼자 해결하는 힘은 지금 만들어지는 중이며, 어느 지표에서 출발하면 되는지는 세부 지표가 보여줍니다.',
+        behaviors: [
+          '딴짓 없이 학습에만 집중하는 몰입유지력',
+          '흔들림 없이 끝까지 완주하는 공부끈기',
+          '실패 앞에서도 다시 도전하는 재시도근성',
+        ],
+        roadmap: [
+          '힌트 없이 성공하는 경험을 쉬운 문항부터 의도적으로 설계',
+          '"혼자 해냈네!" 즉각 피드백으로 학습독립성 강화',
+          '확인 버튼을 누르기 전 스스로 재점검하는 자기교정 루틴 지도',
+        ],
+      },
+      '3': {
+        description: '힌트 없이 제 힘으로 풀고, 오답도 스스로 찾아 고치는 자립심이 뚜렷한 유형입니다. 자리에 앉아 완주하는 힘은 지금 만들어지는 중이며, 이 강한 자립심이야말로 학습 성장의 가장 단단한 엔진입니다.',
+        behaviors: [
+          '확인 전 스스로 오답을 발견하고 즉시 고치는 수정이력',
+          '힌트 없이 제 힘으로 부딪혀 해결하는 학습독립성',
+          '막히는 문제 앞에서도 도움 요청보다 자기 방식의 시도를 먼저 택함',
+        ],
+        roadmap: [
+          '짧은 단위 미션 → 즉시 보상 루프로 몰입 시간을 점진 확장',
+          '5분 몰입 → 10분 몰입, 단계별 착석 목표로 집중력 훈련',
+          '학습 시간을 고정 루틴화하여 완주 습관 만들기',
+        ],
+      },
+      '4': {
+        description: '앉아서 완주하는 습관과 스스로 하려는 힘이 모두 지금 만들어지기 시작하는 단계입니다. 아직 기질이 고착되지 않아 코칭과 환경에 따라 성장 방향이 크게 열려 있으며, 어느 지표부터 자라날지는 세부 지표가 보여줍니다.',
+        behaviors: [
+          '학습 자세와 페이스가 상황·컨디션에 따라 크게 달라지는 시기',
+          '과제 자체보다 흥미 요소(노래·게임·스토리)에 먼저 반응하는 탐색 단계',
+          '어른의 리드와 환경 설계에 따라 몰입과 이탈이 좌우됨',
+        ],
+        roadmap: [
+          '부담 없는 최저 난이도부터 시작해 성공 경험 우선 축적',
+          '아이가 반응하는 콘텐츠 유형(노래·게임·스토리) 관찰 후 집중 배치',
+          '1:1 관심 코칭으로 학습 정서부터 안정화 → 기질 발현 유도',
+        ],
+      },
+    };
 
     const TemperamentSimulator = () => {
-      const [mScore, setMScore] = useState(75);
-      const [bScore, setBScore] = useState(75);
-      const [cScore, setCScore] = useState(75);
-      const [dominantType, setDominantType] = useState('');
-      const [typeDescription, setTypeDescription] = useState('');
-      const [behaviorList, setBehaviorList] = useState([]);
-      const [roadmapList, setRoadmapList] = useState([]);
+      // 판정 지표 5개 (75 = 50점 이상, 25 = 50점 미만)
+      const [scores, setScores] = useState({ focus: 75, grit: 75, retry: 75, selfFix: 75, indep: 75 });
+      const setScore = (key, val) => setScores(prev => ({ ...prev, [key]: val }));
 
-      const allTypes = [
-        { id: 1, m: true, b: true, c: true, icon: '👑', name: '올라운드 밸런스형', desc: '집중력, 두뇌 회전, 자립심을 모두 갖춘 완성형 우등생', color: 'bg-purple-50 border-purple-200 text-purple-700' },
-        { id: 2, m: true, b: true, c: false, icon: '🎯', name: '성실한 자립형', desc: '진득한 끈기와 스스로 해결하려는 의지를 겸비', color: 'bg-blue-50 border-blue-200 text-blue-700' },
-        { id: 3, m: true, b: false, c: true, icon: '⚡', name: '영리한 해결사형', desc: '빠른 두뇌 회전과 자립심을 갖춘 스마트 해결사', color: 'bg-teal-50 border-teal-200 text-teal-700' },
-        { id: 4, m: true, b: false, c: false, icon: '🔥', name: '당찬 자립형', desc: '스스로 고치고 혼자 해내려는 의지가 강한 아이', color: 'bg-red-50 border-red-200 text-red-700' },
-        { id: 5, m: false, b: true, c: true, icon: '🦉', name: '차분한 탐구형', desc: '흔들림 없는 집중력과 안정적인 사고 흐름의 소유자', color: 'bg-indigo-50 border-indigo-200 text-indigo-700' },
-        { id: 6, m: false, b: true, c: false, icon: '🌳', name: '우직한 성실형', desc: '끝까지 포기하지 않는 진득한 엉덩이 힘의 소유자', color: 'bg-sky-50 border-sky-200 text-sky-700' },
-        { id: 7, m: false, b: false, c: true, icon: '💡', name: '명민한 두뇌형', desc: '또래보다 빠르고 안정적인 두뇌 회전이 돋보임', color: 'bg-emerald-50 border-emerald-200 text-emerald-700' },
-        { id: 8, m: false, b: false, c: false, icon: '🌱', name: '무한 잠재력형', desc: '어떤 강점도 흡수할 수 있는 열려있는 도화지 기질', color: 'bg-stone-50 border-stone-200 text-stone-700' }
-      ];
+      // 1단계: 지표 → 축 (AND 판정)
+      const isB = INDICATORS.behavior.every(i => scores[i.key] >= 50);
+      const isM = INDICATORS.motivation.every(i => scores[i.key] >= 50);
+      const lowB = INDICATORS.behavior.filter(i => scores[i.key] < 50).map(i => i.label);
+      const lowM = INDICATORS.motivation.filter(i => scores[i.key] < 50).map(i => i.label);
 
-      useEffect(() => {
-        const isM = mScore >= 50;
-        const isB = bScore >= 50;
-        const isC = cScore >= 50;
+      // 2단계: 축 → 유형 (행동 × 동기 2×2)
+      const activeType = ALL_TYPES.find(t => t.b === isB && t.m === isM);
+      const content = TYPE_CONTENT[String(activeType.id)];
 
-        if (isM && isB && isC) {
-          setDominantType('👑 올라운드 밸런스형 (All-Round Balancer)');
-          setTypeDescription('집중력, 두뇌 회전, 자립심을 모두 갖춘 이상적인 우등생 기질입니다. 어떤 난이도의 과제가 주어져도 스스로 멘탈을 관리하며 안정적으로 해결해 냅니다.');
-          setBehaviorList(['딴짓 없이 끝까지 완주하는 몰입유지력과 공부끈기', '또래보다 빠른 생각속도와 일정한 공부리듬', '스스로 실수를 고치고 힌트 없이 해결하는 자립심']);
-          setRoadmapList(['상위 레벨 콘텐츠 조기 오픈으로 도전 욕구를 지속 자극', '또래 발화 리더 역할 부여 → 성취를 표현의 기회로 확장', '월별 성장리포트로 최상위 페이스 유지 여부만 모니터링']);
-        } else if (isM && isB && !isC) {
-          setDominantType('🎯 성실한 자립형 (Sincere Independent)');
-          setTypeDescription('진득하게 앉아 끝까지 해내는 끈기와, 스스로 실수를 고치고 혼자 해결하려는 의지를 겸비했습니다. 처리 속도는 아직 발전 중이지만, 성실함과 자립심이 탄탄해 꾸준히 성취를 쌓아가는 유형입니다.');
-          setBehaviorList(['오답에 좌절하지 않고 즉각 재도전하는 재시도근성', '딴짓 없이 끝까지 완주하는 강한 공부끈기', '스스로 실수를 발견하고 고치는 수정이력']);
-          setRoadmapList(['타이머 게임형 퀴즈로 처리속도를 놀이처럼 끌어올리기', '음원 따라 말하기(섀도잉) 반복으로 반응속도 자연 향상', '끈기가 무기이므로 분량보다 속도 중심 미션으로 설계']);
-        } else if (isM && !isB && isC) {
-          setDominantType('⚡ 영리한 해결사형 (Clever Solver)');
-          setTypeDescription('빠른 두뇌 회전과 스스로 해결하려는 자립심이 돋보입니다. 다만 흥미가 떨어지면 집중이 흐트러질 수 있어, 몰입을 유지시켜주는 환경이 뒷받침되면 폭발적인 성과를 냅니다.');
-          setBehaviorList(['또래보다 빠른 생각속도로 문제에 즉각 반응', '힌트 없이 혼자 해결하는 높은 학습독립성', '일정한 공부리듬으로 페이스를 안정적으로 유지']);
-          setRoadmapList(['짧은 단위 미션 → 즉시 보상 루프로 몰입 시간을 점진 확장', '흥미 주제(스토리·게임형 콘텐츠) 우선 배치로 이탈 방지', '학습 시간을 고정 루틴화하여 완주 습관 만들기']);
-        } else if (isM && !isB && !isC) {
-          setDominantType('🔥 당찬 자립형 (Bold Independent)');
-          setTypeDescription('스스로 실수를 고치고 힌트 없이 혼자 해내려는 의지가 매우 강한 아이입니다. 집중 지속과 처리 속도는 아직 자라는 중이지만, 이 강한 자립심이야말로 학습 성장의 가장 단단한 엔진입니다.');
-          setBehaviorList(['스스로 실수를 발견하고 즉시 교정하는 수정이력', '힌트 없이 부딪히며 해결하려는 학습독립성', '자기 확신이 강해 주도적으로 문제에 접근함']);
-          setRoadmapList(['혼자 해내려는 의지를 칭찬 포인트로 → 자신감 기반 확장', '동일한 문항 구조를 반복 연습하여 처리 속도의 기초 체력을 탄탄하게', '5분 몰입 → 10분 몰입 단계별 착석 목표로 집중력 훈련']);
-        } else if (!isM && isB && isC) {
-          setDominantType('🦉 차분한 탐구형 (Calm Explorer)');
-          setTypeDescription('흔들림 없는 집중력과 빠르고 안정적인 사고 흐름을 함께 갖췄습니다. 아직 힌트에 기대는 경향이 있지만, 혼자 해결하는 성공 경험이 쌓이면 최상위권 잠재력이 터지는 유형입니다.');
-          setBehaviorList(['딴짓 없이 화면에 집중하는 높은 몰입유지력', '일정한 공부리듬으로 페이스를 흔들림 없이 유지', '포기 않고 끝까지 완주하는 공부끈기']);
-          setRoadmapList(['힌트 없이 성공하는 경험을 의도적으로 설계 (쉬운 문항부터)', '"혼자 해냈네!" 즉각 피드백으로 학습독립성 강화', '자기교정 습관을 위해 확인 전 재점검 루틴 지도']);
-        } else if (!isM && isB && !isC) {
-          setDominantType('🌳 우직한 성실형 (Steadfast Worker)');
-          setTypeDescription('속도보다 끈기로 승부하는 진득한 노력파입니다. 딴짓 없이 끝까지 완주하는 엉덩이 힘이 최대 강점이며, 처리 속도와 자립심은 반복 경험을 통해 자연스럽게 따라오는 유형입니다.');
-          setBehaviorList(['딴짓 없이 학습에만 집중하는 몰입유지력', '흔들림 없이 끝까지 완주하는 공부끈기', '실패 앞에서도 다시 도전하는 재시도근성']);
-          setRoadmapList(['속도 압박 없는 반복 학습으로 성공 경험 누적이 최우선', '음원·이미지 결합 콘텐츠로 처리속도를 감각적으로 향상', '작은 성취마다 보상하여 끈기를 자존감으로 연결']);
-        } else if (!isM && !isB && isC) {
-          setDominantType('💡 명민한 두뇌형 (Bright Thinker)');
-          setTypeDescription('또래보다 빠른 생각속도와 일정한 사고 페이스가 돋보이는 두뇌파입니다. 다만 진득하게 앉아있는 힘과 혼자 해결하려는 의지가 함께 자라면 잠재력이 완성되는 유형입니다.');
-          setBehaviorList(['또래보다 빠른 생각속도로 문제를 처리', '일정한 공부리듬으로 페이스를 안정적으로 유지', '흥미 있는 과제에서 순간 집중력이 폭발함']);
-          setRoadmapList(['빠른 두뇌에 맞는 속도감 있는 학습 제시', '완주 시에만 열리는 보상 구조로 끝까지 푸는 습관 형성', '힌트 사용 전 "한 번 더 생각" 규칙으로 자립심 훈련']);
-        } else {
-          setDominantType('🌱 무한 잠재력형 (Budding Potential)');
-          setTypeDescription('아직 특정한 기질이 고착화되지 않은 유연하고 열린 상태입니다. 앞으로 어떤 코칭을 받고 어떤 환경에 놓이느냐에 따라 다양한 강점을 흡수하고 폭발적으로 성장할 수 있는 도화지 같은 기질입니다.');
-          setBehaviorList(['특정 패턴에 얽매이지 않는 자유로운 반응', '에너지를 비축하며 상황을 관망함', '직관과 경험을 바탕으로 한 유연한 탐색']);
-          setRoadmapList(['부담 없는 최저 난이도부터 시작해 성공 경험 우선 축적', '아이가 반응하는 콘텐츠 유형(노래·게임·스토리) 관찰 후 집중 배치', '1:1 관심 코칭으로 학습 정서부터 안정화 → 기질 발현 유도']);
-        }
-      }, [mScore, bScore, cScore]);
+      const selectType = (type) => {
+        setScores({
+          focus: type.b ? 75 : 25, grit: type.b ? 75 : 25, retry: type.b ? 75 : 25,
+          selfFix: type.m ? 75 : 25, indep: type.m ? 75 : 25,
+        });
+      };
+
+      const IndicatorRow = ({ ind, color }) => (
+        <div className="flex items-center justify-between gap-2 py-1.5">
+          <div className="min-w-0">
+            <p className="text-[13px] font-bold text-gray-700">{ind.label}</p>
+            <p className="text-[11px] text-gray-400 leading-snug">{ind.desc}</p>
+          </div>
+          <div className="flex gap-1.5 shrink-0">
+            <button onClick={() => setScore(ind.key, 75)} className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border-2 transition-all ${scores[ind.key] >= 50 ? color.on : 'bg-white border-gray-200 text-gray-400'}`}>50점 이상</button>
+            <button onClick={() => setScore(ind.key, 25)} className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border-2 transition-all ${scores[ind.key] < 50 ? 'bg-gray-600 border-gray-600 text-white' : 'bg-white border-gray-200 text-gray-400'}`}>50점 미만</button>
+          </div>
+        </div>
+      );
+
+      const AxisBadge = ({ ok }) => (
+        <span className={`px-2 py-0.5 rounded-full text-[11px] font-black ${ok ? 'bg-indigo-600 text-white' : 'bg-gray-300 text-gray-600'}`}>{ok ? 'O' : 'X'}</span>
+      );
 
       return (
         <div className="flex flex-col items-center py-10 px-4 bg-gray-50 min-h-screen font-sans">
@@ -98,87 +147,86 @@
               <img src="data:image/png;base64,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" alt="EnglishPOP" style={{height: '34px'}} />
             </div>
 
-
             <div className="flex flex-col md:flex-row gap-8">
+
+              {/* ─── 왼쪽: 매트릭스 + 지표 설정 ─── */}
               <div className="flex-1 space-y-6">
                 <div>
                   <h2 className="text-2xl font-bold text-gray-800 mb-2">학습기질 매트릭스</h2>
-                  <p className="text-sm text-gray-500">해당되는 유형을 직접 선택하거나, 아래 행동, 인지, 동기 조절의 축별 점수를 조합해 판독해 보세요.</p>
+                  <p className="text-sm text-gray-500">해당되는 유형을 직접 선택하거나, 아래 판정 지표의 50점 기준 충족 여부를 설정해 판독해 보세요.</p>
                 </div>
 
-                {/* 8유형 매트릭스 */}
+                {/* 4유형 매트릭스 (행동 × 동기) */}
                 <div className="grid grid-cols-2 gap-2.5">
-                  {allTypes.map((type) => {
-                    const isActive = (mScore >= 50) === type.m && (bScore >= 50) === type.b && (cScore >= 50) === type.c;
+                  {ALL_TYPES.map((type) => {
+                    const isActive = type.b === isB && type.m === isM;
                     return (
                       <button
                         key={'mx' + type.id}
-                        onClick={() => { setMScore(type.m ? 75 : 25); setBScore(type.b ? 75 : 25); setCScore(type.c ? 75 : 25); }}
+                        onClick={() => selectType(type)}
                         className={`text-left p-3 rounded-xl border-2 transition-all duration-200 ${isActive ? 'bg-indigo-600 border-indigo-600 shadow-lg scale-[1.02]' : 'bg-white border-gray-200 hover:border-indigo-300 hover:shadow-sm'}`}
                       >
                         <div className="flex items-center gap-1.5 mb-1">
                           <span className="text-lg">{type.icon}</span>
                           <span className={`text-sm font-bold ${isActive ? 'text-white' : 'text-gray-800'}`}>{type.name}</span>
                         </div>
+                        <p className={`text-[10px] leading-snug mb-1.5 break-keep ${isActive ? 'text-indigo-100' : 'text-gray-400'}`}>{type.desc}</p>
                         <div className={`flex gap-1 text-[9px] font-bold ${isActive ? 'text-indigo-100' : 'text-gray-400'}`}>
-                          <span className={`px-1 rounded ${type.m ? (isActive ? 'bg-white/20' : 'bg-red-50 text-red-500') : 'opacity-40'}`}>동기{type.m ? ' O' : ' X'}</span>
                           <span className={`px-1 rounded ${type.b ? (isActive ? 'bg-white/20' : 'bg-blue-50 text-blue-500') : 'opacity-40'}`}>행동{type.b ? ' O' : ' X'}</span>
-                          <span className={`px-1 rounded ${type.c ? (isActive ? 'bg-white/20' : 'bg-green-50 text-green-600') : 'opacity-40'}`}>인지{type.c ? ' O' : ' X'}</span>
+                          <span className={`px-1 rounded ${type.m ? (isActive ? 'bg-white/20' : 'bg-red-50 text-red-500') : 'opacity-40'}`}>동기{type.m ? ' O' : ' X'}</span>
                         </div>
                       </button>
                     );
                   })}
                 </div>
 
-                {/* 축별 점수 선택 + 정의 */}
+                {/* 판정 지표 설정 */}
                 <div className="border-t border-gray-100 pt-4 space-y-3">
-                  <p className="text-xs font-bold text-gray-400 tracking-wide">축별 점수 직접 설정 (50점 기준)</p>
+                  <p className="text-xs font-bold text-gray-400 tracking-wide">판정 지표 직접 설정 (50점 기준)</p>
 
-                  <div className={`p-3 rounded-xl border transition-colors ${bScore >= 50 ? 'bg-blue-50/60 border-blue-200' : 'bg-gray-50 border-gray-200'}`}>
-                    <div className="flex items-center justify-between gap-2">
-                      <label className="text-sm text-gray-700 font-bold shrink-0">행동 조절 (B)</label>
-                      <div className="flex gap-1.5">
-                        <button onClick={() => setBScore(75)} className={`px-3 py-1.5 rounded-lg text-xs font-bold border-2 transition-all ${bScore >= 50 ? 'bg-blue-500 border-blue-500 text-white' : 'bg-white border-gray-200 text-gray-400 hover:border-blue-300'}`}>50점 이상</button>
-                        <button onClick={() => setBScore(25)} className={`px-3 py-1.5 rounded-lg text-xs font-bold border-2 transition-all ${bScore < 50 ? 'bg-gray-600 border-gray-600 text-white' : 'bg-white border-gray-200 text-gray-400 hover:border-gray-400'}`}>50점 미만</button>
-                      </div>
+                  <div className={`p-3 rounded-xl border transition-colors ${isB ? 'bg-blue-50/60 border-blue-200' : 'bg-gray-50 border-gray-200'}`}>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-sm text-gray-700 font-bold">행동 조절 (B)</label>
+                      <AxisBadge ok={isB} />
                     </div>
-                    <div className="mt-2 text-[11px] text-gray-500 leading-snug space-y-0.5">
-                      <p><strong className="text-blue-500">몰입유지력</strong> · 딴짓 없이 학습에만 집중하는 힘</p>
-                      <p><strong className="text-blue-500">공부끈기</strong> · 흔들림 없이 끝까지 완주하는 힘</p>
-                      <p><strong className="text-blue-500">재시도근성</strong> · 실패 앞에서도 다시 일어서는 힘</p>
+                    {INDICATORS.behavior.map(ind => (
+                      <IndicatorRow key={ind.key} ind={ind} color={{ on: 'bg-blue-500 border-blue-500 text-white' }} />
+                    ))}
+                  </div>
+
+                  <div className={`p-3 rounded-xl border transition-colors ${isM ? 'bg-red-50/60 border-red-200' : 'bg-gray-50 border-gray-200'}`}>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-sm text-gray-700 font-bold">동기 조절 (M)</label>
+                      <AxisBadge ok={isM} />
+                    </div>
+                    {INDICATORS.motivation.map(ind => (
+                      <IndicatorRow key={ind.key} ind={ind} color={{ on: 'bg-red-500 border-red-500 text-white' }} />
+                    ))}
+                  </div>
+
+                  {/* 인지축: 유형 판정 미반영 */}
+                  <div className="p-3 rounded-xl border bg-gray-50 border-dashed border-gray-300">
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-sm text-gray-500 font-bold">인지 조절 (C)</label>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-gray-200 text-gray-500">유형 판정 미반영</span>
+                    </div>
+                    <div className="text-[11px] text-gray-400 leading-snug space-y-0.5">
+                      <p><strong className="text-gray-500">생각속도</strong> · 또래보다 빠르게 반응하는 인지 민첩성 — POP SCAN에서 측정, 리포트에 별도 표기</p>
+                      <p><strong className="text-gray-500">공부리듬</strong> · 문제마다 일정한 속도로 풀어가는 안정감 — 성장 리포트에서 측정</p>
+                      <p className="pt-1">인지축은 공부리듬이 POP SCAN 단계에서 측정되지 않아 유형 판정에서 제외하며, 성장 리포트에서 두 지표를 함께 종합 판독합니다.</p>
                     </div>
                   </div>
 
-                  <div className={`p-3 rounded-xl border transition-colors ${cScore >= 50 ? 'bg-green-50/60 border-green-200' : 'bg-gray-50 border-gray-200'}`}>
-                    <div className="flex items-center justify-between gap-2">
-                      <label className="text-sm text-gray-700 font-bold shrink-0">인지 조절 (C)</label>
-                      <div className="flex gap-1.5">
-                        <button onClick={() => setCScore(75)} className={`px-3 py-1.5 rounded-lg text-xs font-bold border-2 transition-all ${cScore >= 50 ? 'bg-green-500 border-green-500 text-white' : 'bg-white border-gray-200 text-gray-400 hover:border-green-300'}`}>50점 이상</button>
-                        <button onClick={() => setCScore(25)} className={`px-3 py-1.5 rounded-lg text-xs font-bold border-2 transition-all ${cScore < 50 ? 'bg-gray-600 border-gray-600 text-white' : 'bg-white border-gray-200 text-gray-400 hover:border-gray-400'}`}>50점 미만</button>
-                      </div>
-                    </div>
-                    <div className="mt-2 text-[11px] text-gray-500 leading-snug space-y-0.5">
-                      <p><strong className="text-green-600">생각속도</strong> · 또래보다 빠르게 반응하는 인지 민첩성</p>
-                      <p><strong className="text-green-600">공부리듬</strong> · 문제마다 일정한 속도로 풀어가는 안정감</p>
-                    </div>
-                  </div>
-
-                  <div className={`p-3 rounded-xl border transition-colors ${mScore >= 50 ? 'bg-red-50/60 border-red-200' : 'bg-gray-50 border-gray-200'}`}>
-                    <div className="flex items-center justify-between gap-2">
-                      <label className="text-sm text-gray-700 font-bold shrink-0">동기 조절 (M)</label>
-                      <div className="flex gap-1.5">
-                        <button onClick={() => setMScore(75)} className={`px-3 py-1.5 rounded-lg text-xs font-bold border-2 transition-all ${mScore >= 50 ? 'bg-red-500 border-red-500 text-white' : 'bg-white border-gray-200 text-gray-400 hover:border-red-300'}`}>50점 이상</button>
-                        <button onClick={() => setMScore(25)} className={`px-3 py-1.5 rounded-lg text-xs font-bold border-2 transition-all ${mScore < 50 ? 'bg-gray-600 border-gray-600 text-white' : 'bg-white border-gray-200 text-gray-400 hover:border-gray-400'}`}>50점 미만</button>
-                      </div>
-                    </div>
-                    <div className="mt-2 text-[11px] text-gray-500 leading-snug space-y-0.5">
-                      <p><strong className="text-red-500">수정이력</strong> · 스스로 실수를 발견하고 정답으로 고치는 힘</p>
-                      <p><strong className="text-red-500">학습독립성</strong> · 힌트 없이 내 힘으로 해결하는 힘</p>
-                    </div>
+                  {/* 판정 로직 요약 */}
+                  <div className="p-3 rounded-xl bg-indigo-50/60 border border-indigo-100 text-[11px] text-gray-600 leading-relaxed space-y-1">
+                    <p className="font-bold text-indigo-600 text-xs">판정 로직</p>
+                    <p><strong>1단계</strong> 지표 → 축 : 소속 판정 지표가 <strong>전부 50점 이상</strong>이어야 해당 축 O. 하나라도 미만이면 X. (X는 "전부 낮음"이 아니라 "미달 지표가 있음"을 뜻합니다)</p>
+                    <p><strong>2단계</strong> 축 → 유형 : 행동 × 동기 O/X 조합으로 4유형 결정. 유형명은 O인 축의 강점만 서술합니다.</p>
                   </div>
                 </div>
               </div>
 
+              {/* ─── 오른쪽: 판독 결과 ─── */}
               <div className="flex-1 flex flex-col justify-center">
                 <div className="p-6 rounded-2xl border-2 transition-all duration-300 shadow-md h-full flex flex-col justify-center bg-indigo-50 border-indigo-200">
                   <div className="text-center mb-6">
@@ -186,14 +234,20 @@
                       실시간 학습 기질 판독 결과
                     </span>
                     <h3 className="text-2xl font-black text-indigo-700 leading-tight">
-                      {dominantType.split(' (')[0]}
+                      {activeType.icon} {activeType.name}
                     </h3>
-                    <p className="text-sm font-bold text-indigo-400 tracking-wide mb-4 mt-1">
-                      {dominantType.includes('(') ? dominantType.split(' (')[1].replace(')', '') : ''}
+                    <p className="text-sm font-bold text-indigo-400 tracking-wide mb-4 mt-1">{activeType.en}</p>
+                    <p className="text-gray-700 text-sm leading-relaxed text-left bg-white p-4 rounded-lg shadow-sm break-keep">
+                      {content.description}
                     </p>
-                    <p className="text-gray-700 text-sm leading-relaxed text-left bg-white p-4 rounded-lg shadow-sm">
-                      {typeDescription}
-                    </p>
+
+                    {/* 판정 근거 */}
+                    <div className="mt-3 bg-white p-3 rounded-lg shadow-sm text-left text-[12px] text-gray-600 space-y-1">
+                      <p className="text-[11px] font-bold text-gray-400 tracking-wide">판정 근거</p>
+                      <p>행동 조절 <strong className={isB ? 'text-blue-600' : 'text-gray-500'}>{isB ? 'O' : 'X'}</strong> · {isB ? '몰입유지력·공부끈기·재시도근성 모두 50점 이상' : `미달 지표: ${lowB.join(', ')}`}</p>
+                      <p>동기 조절 <strong className={isM ? 'text-red-500' : 'text-gray-500'}>{isM ? 'O' : 'X'}</strong> · {isM ? '수정이력·학습독립성 모두 50점 이상' : `미달 지표: ${lowM.join(', ')}`}</p>
+                      {(!isB || !isM) && <p className="text-[11px] text-gray-400 pt-1">코칭 로드맵은 미달 지표를 출발점으로 조정해 안내하세요.</p>}
+                    </div>
                   </div>
 
                   <div className="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
@@ -202,7 +256,7 @@
                       발견된 핵심 행동 패턴 (Trigger Events)
                     </h4>
                     <ul className="space-y-2">
-                      {behaviorList.map((behavior, index) => (
+                      {content.behaviors.map((behavior, index) => (
                         <li key={index} className="flex items-start text-sm text-gray-600 leading-relaxed">
                           <span className="text-indigo-400 mr-2">▪</span>
                           <span className="flex-1 break-keep">{behavior}</span>
@@ -217,7 +271,7 @@
                       잉글리시팝 코칭 로드맵 (Coaching Roadmap)
                     </h4>
                     <ul className="space-y-3">
-                      {roadmapList.map((roadmap, index) => (
+                      {content.roadmap.map((roadmap, index) => (
                         <li key={index} className="flex items-start text-[13px] text-violet-50 leading-relaxed">
                           <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/20 text-white text-[10px] font-bold flex items-center justify-center mr-2.5 mt-0.5">{index + 1}</span>
                           <span className="flex-1 break-keep">{roadmap}</span>
@@ -228,7 +282,6 @@
                 </div>
               </div>
             </div>
-
 
           </div>
         </div>
