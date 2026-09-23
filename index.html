@@ -39,6 +39,8 @@
       { id: 8, b: false, c: false, m: false, icon: '🌱', name: '무한 잠재력형',     en: 'Budding Potential',   desc: '세 영역 모두 이제 습관이 만들어지기 시작하는 출발점의 아이' },
     ];
 
+    const IND_RE = /(몰입유지력|공부끈기|재시도근성|생각속도|수정이력|학습독립성|몰입·끈기)/g;
+    const hiInd = (text) => text.split(IND_RE).map((part, i) => (i % 2 === 1) ? <span key={i} className="font-black text-yellow-200">{part}</span> : part);
     const TYPE_CONTENT = {
       '1': {
         description: '엉덩이 힘과 끈기, 뇌의 순발력, 스스로 하려는 마음이 세 영역 모두 자리 잡혀 있습니다. 한 영역이 다른 영역을 떠받치는 구조라 과제가 어려워져도 무너지는 데가 없고, 지금 균형 그대로 난도를 올려 도전의 폭을 넓힐 수 있는 유형입니다.',
@@ -212,7 +214,7 @@
                       {content.roadmap.map((x, i) => (
                         <li key={i} className="flex items-start text-[15px] text-violet-50 leading-relaxed">
                           <span className="flex-shrink-0 w-5 h-5 rounded-full bg-white/20 text-white text-[10px] font-bold flex items-center justify-center mr-2.5 mt-0.5">{i + 1}</span>
-                          <span className="flex-1 break-keep">{x}</span>
+                          <span className="flex-1 break-keep">{hiInd(x)}</span>
                         </li>
                       ))}
                     </ul>
